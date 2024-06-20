@@ -13,7 +13,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float moveSpeed = 10f;
 
     [Header("Dashing")]
-    [SerializeField] private float dashingVelocity = 20f;
+    [SerializeField] private float dashingVelocity = 50f;
     [SerializeField] private float dashingTime = 0.15f;
     [SerializeField] private bool isDashing;
     [SerializeField] private bool canDash = true;
