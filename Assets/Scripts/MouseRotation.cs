@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class GunRotation : MonoBehaviour
+public class MouseRotation : MonoBehaviour
 {
     public GameObject player;
     public float distanceFromPlayer = 2.0f;
