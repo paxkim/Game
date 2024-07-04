@@ -16,9 +16,11 @@ public class Attack : MonoBehaviour
 
     
     [Header("Shooting Parameters")]
-    public GameObject bullet;
+    public GameObject Bullet;
+    public GameObject gunPoint;
     [SerializeField] private float shootTimer = 0.1f;
-    [SerializeField] private float shootCooldown = 0.05f;
+    // [SerializeField] private float shootCooldown = 0.05f;
+    [SerializeField] public float fireForce = 10f;
     [SerializeField] private bool isShooting;
     [SerializeField] private bool canShoot = true;
 
@@ -30,12 +32,12 @@ public class Attack : MonoBehaviour
     private void OnEnable(){
         input.Enable(); 
         input.Player.Attack.performed += OnAttackPerformed;
-        input.Player.Attack.performed += OnShootPerformed;
+        input.Player.Shoot.performed += OnShootPerformed;
     }
     private void OnDisable(){
         input.Disable();
         input.Player.Attack.performed -= OnAttackPerformed;
-        input.Player.Attack.performed -= OnShootPerformed;
+        input.Player.Shoot.performed -= OnShootPerformed;
     }
     private void OnAttackPerformed(InputAction.CallbackContext value){
         if(canAttack && !isAttacking){
@@ -43,7 +45,8 @@ public class Attack : MonoBehaviour
         }
     }
     private void OnShootPerformed(InputAction.CallbackContext value){
-        if(canAttack && !isAttacking){
+        Debug.Log("RIGHT CLICK");
+        if(canShoot && !isShooting){
             StartCoroutine(DoShoot());
         }
     }
@@ -63,7 +66,21 @@ public class Attack : MonoBehaviour
 
     }
     private IEnumerator DoShoot(){
-        yield return new WaitForSeconds(attackTimer);
+        Debug.Log("BANG");
+        isShooting = true;
+        canShoot = false;
+        GameObject intBullet = Instantiate(Bullet, gunPoint.transform.position, gunPoint.transform.rotation);
+        MouseRotation mouseRotation = gunPoint.GetComponent<MouseRotation>();
+        if(mouseRotation.gunForm == true){
+            intBullet.GetComponent<Rigidbody2D>().AddForce(gunPoint.transform.right * fireForce, ForceMode2D.Impulse);
+        }
+        else{
+            intBullet.GetComponent<Rigidbody2D>().AddForce(-gunPoint.transform.right * fireForce, ForceMode2D.Impulse);
+        }
+        Destroy(intBullet, 2f);
+        yield return new WaitForSeconds(shootTimer);
+        isShooting = false;
+        canShoot = true;
     }
 
 

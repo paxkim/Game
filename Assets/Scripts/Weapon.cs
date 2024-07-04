@@ -7,7 +7,7 @@ public class Weapon : MonoBehaviour
 {
     public float damage = 1.0f;
     Rigidbody2D rb;
-    Transform target;
+    // Transform target;
 
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
