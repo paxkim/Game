@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public Animator animator;
     private CustomInput input = null;
     private Vector2 moveVector = Vector2.zero;
     private Rigidbody2D rb = null;
@@ -39,6 +40,15 @@ public class PlayerMovement : MonoBehaviour
     }
     
     private void FixedUpdate() {
+        float speed = moveVector.magnitude;
+        animator.SetFloat("Speed", speed);
+
+        // Flip the character based on movement direction
+        if (moveVector.x != 0) {
+            Vector3 scale = transform.localScale;
+            scale.x = Mathf.Sign(moveVector.x) * Mathf.Abs(scale.x);
+            transform.localScale = scale;
+        }
         if (!isDashing) {
             rb.velocity = moveVector * moveSpeed;
         }
