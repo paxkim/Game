@@ -71,6 +71,15 @@ public partial class @CustomInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SwitchForm"",
+                    ""type"": ""Button"",
+                    ""id"": ""708601f8-db84-4edc-be6c-f4f15832b624"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -282,6 +291,17 @@ public partial class @CustomInput: IInputActionCollection2, IDisposable
                     ""action"": ""Shoot"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fd53c771-4c9e-459b-8392-3c693017bc34"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SwitchForm"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -295,6 +315,7 @@ public partial class @CustomInput: IInputActionCollection2, IDisposable
         m_Player_MousePosition = m_Player.FindAction("MousePosition", throwIfNotFound: true);
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
         m_Player_Shoot = m_Player.FindAction("Shoot", throwIfNotFound: true);
+        m_Player_SwitchForm = m_Player.FindAction("SwitchForm", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -361,6 +382,7 @@ public partial class @CustomInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_MousePosition;
     private readonly InputAction m_Player_Attack;
     private readonly InputAction m_Player_Shoot;
+    private readonly InputAction m_Player_SwitchForm;
     public struct PlayerActions
     {
         private @CustomInput m_Wrapper;
@@ -370,6 +392,7 @@ public partial class @CustomInput: IInputActionCollection2, IDisposable
         public InputAction @MousePosition => m_Wrapper.m_Player_MousePosition;
         public InputAction @Attack => m_Wrapper.m_Player_Attack;
         public InputAction @Shoot => m_Wrapper.m_Player_Shoot;
+        public InputAction @SwitchForm => m_Wrapper.m_Player_SwitchForm;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -394,6 +417,9 @@ public partial class @CustomInput: IInputActionCollection2, IDisposable
             @Shoot.started += instance.OnShoot;
             @Shoot.performed += instance.OnShoot;
             @Shoot.canceled += instance.OnShoot;
+            @SwitchForm.started += instance.OnSwitchForm;
+            @SwitchForm.performed += instance.OnSwitchForm;
+            @SwitchForm.canceled += instance.OnSwitchForm;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -413,6 +439,9 @@ public partial class @CustomInput: IInputActionCollection2, IDisposable
             @Shoot.started -= instance.OnShoot;
             @Shoot.performed -= instance.OnShoot;
             @Shoot.canceled -= instance.OnShoot;
+            @SwitchForm.started -= instance.OnSwitchForm;
+            @SwitchForm.performed -= instance.OnSwitchForm;
+            @SwitchForm.canceled -= instance.OnSwitchForm;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -437,5 +466,6 @@ public partial class @CustomInput: IInputActionCollection2, IDisposable
         void OnMousePosition(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
         void OnShoot(InputAction.CallbackContext context);
+        void OnSwitchForm(InputAction.CallbackContext context);
     }
 }

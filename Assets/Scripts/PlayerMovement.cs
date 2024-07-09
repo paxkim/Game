@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     public Animator animator;
+    public GameObject visual;  // Reference to the child GameObject containing the sprite/visuals
     private CustomInput input = null;
     private Vector2 moveVector = Vector2.zero;
     private Rigidbody2D rb = null;
@@ -24,7 +25,10 @@ public class PlayerMovement : MonoBehaviour
         input = new CustomInput();
         rb = GetComponent<Rigidbody2D>();
 
+        // Freeze rotation to prevent spinning
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
     }
+
     private void OnEnable() {
         input.Enable();
         input.Player.Movement.performed += OnMovementPerformed;
@@ -38,33 +42,38 @@ public class PlayerMovement : MonoBehaviour
         input.Player.Movement.canceled -= OnMovementCancelled;
         input.Player.Dash.performed -= OnDashPerformed;
     }
-    
+
     private void FixedUpdate() {
         float speed = moveVector.magnitude;
         animator.SetFloat("Speed", speed);
 
-        // Flip the character based on movement direction
+        // Flip the character based on movement direction using Y-axis rotation
         if (moveVector.x != 0) {
-            Vector3 scale = transform.localScale;
-            scale.x = Mathf.Sign(moveVector.x) * Mathf.Abs(scale.x);
-            transform.localScale = scale;
+            Vector3 rotation = visual.transform.eulerAngles;
+            rotation.y = moveVector.x > 0 ? 0 : 180;
+            visual.transform.eulerAngles = rotation;
         }
+        
         if (!isDashing) {
             rb.velocity = moveVector * moveSpeed;
         }
-    }    
-    private void OnMovementPerformed(InputAction.CallbackContext value){
+    }
+
+    private void OnMovementPerformed(InputAction.CallbackContext value) {
         moveVector = value.ReadValue<Vector2>();
     }
-    private void OnMovementCancelled(InputAction.CallbackContext value){
+
+    private void OnMovementCancelled(InputAction.CallbackContext value) {
         moveVector = Vector2.zero;
     }
-    private void OnDashPerformed(InputAction.CallbackContext value){
-        if (canDash && !isDashing){
+
+    private void OnDashPerformed(InputAction.CallbackContext value) {
+        if (canDash && !isDashing) {
             StartCoroutine(Dash());
         }
     }
-    private IEnumerator Dash(){
+
+    private IEnumerator Dash() {
         isDashing = true;
         canDash = false;
         Debug.Log("Can't Dash");
