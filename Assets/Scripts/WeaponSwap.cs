@@ -28,7 +28,6 @@ public class WeaponSwap : MonoBehaviour
     }
 
     private void OnSwitchFormPerformed(InputAction.CallbackContext context){
-        // Toggle gunForm
         gunForm = !gunForm;
 
         // Update the weapon sprite

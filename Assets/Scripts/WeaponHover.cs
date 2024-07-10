@@ -9,8 +9,10 @@ public class WeaponHover : MonoBehaviour
     public WeaponSwap weaponSwap; // Reference to the WeaponSwap script
 
     public Vector2 positionOffset = Vector2.zero; // Offset from the player's position
-    public float gunFormRotation = 0.0f; // Additional rotation in degrees when gunForm is true
-    public float meleeFormRotation = 0.0f; // Additional rotation in degrees when gunForm is false
+    public float gunFormRotationRight = 0.0f; // Rotation offset when gunForm is true and weapon points right
+    public float gunFormRotationLeft = 0.0f; // Rotation offset when gunForm is true and weapon points left
+    public float meleeFormRotationRight = 0.0f; // Rotation offset when gunForm is false and weapon points right
+    public float meleeFormRotationLeft = 0.0f; // Rotation offset when gunForm is false and weapon points left
 
     private CustomInput input = null;
     private Vector2 mousePosition;
@@ -57,11 +59,27 @@ public class WeaponHover : MonoBehaviour
         // Calculate the direction from the player to the mouse position
         Vector2 direction = (worldMousePosition - (Vector2)player.transform.position).normalized;
 
-        // Determine the rotation offset based on gunForm
-        float rotationOffset = weaponSwap.gunForm ? gunFormRotation : meleeFormRotation;
+        // Determine if the weapon is pointing left or right
+        bool isPointingRight = direction.x >= 0;
+
+        // Determine the rotation offset based on gunForm and direction
+        float rotationOffset;
+        if (weaponSwap.gunForm)
+        {
+            rotationOffset = isPointingRight ? gunFormRotationRight : gunFormRotationLeft;
+        }
+        else
+        {
+            rotationOffset = isPointingRight ? meleeFormRotationRight : meleeFormRotationLeft;
+        }
 
         // Calculate the angle with the rotation offset
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg + rotationOffset;
         transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+
+        // Flip the sprite based on the direction
+        Vector3 scale = transform.localScale;
+        scale.y = isPointingRight ? Mathf.Abs(scale.y) : -Mathf.Abs(scale.y);
+        transform.localScale = scale;
     }
 }
