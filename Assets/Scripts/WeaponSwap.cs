@@ -10,9 +10,6 @@ public class WeaponSwap : MonoBehaviour
     private CustomInput input = null;
     public bool gunForm = false;
 
-    // Reference to MouseRotation script
-    public MouseRotation mouseRotation;
-
     private void Awake(){
         input = new CustomInput();
     }
@@ -34,9 +31,5 @@ public class WeaponSwap : MonoBehaviour
         newSprite = gunForm ? weaponSprites[1] : weaponSprites[0];
         gameObject.GetComponent<SpriteRenderer>().sprite = newSprite;
 
-        // Update gunForm in MouseRotation
-        if(mouseRotation != null){
-            mouseRotation.gunForm = gunForm;
-        }
     }
 }

@@ -3,15 +3,17 @@ using System.Collections.Generic;
 // using System.Numerics;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 public class MouseRotation : MonoBehaviour
 {
     public GameObject player;
-    public float distanceFromPlayer = 2.0f;
+    public WeaponSwap weaponSwap; // Reference to the WeaponSwap script
 
     private CustomInput input = null;
     private Vector2 mousePosition;
-    public bool gunForm = true;
+    public float distanceFromPlayer = 2.0f;
+    [SerializeField] private int reverse = 1;
 
     private void Awake(){
         input = new CustomInput();
@@ -49,11 +51,11 @@ public class MouseRotation : MonoBehaviour
     Vector2 direction = (worldMousePosition - (Vector2)player.transform.position).normalized;
     // Calculate the target position at the specified distance from the player
     Vector2 targetPosition;
-    if(gunForm){
-        targetPosition = (Vector2)player.transform.position + direction * distanceFromPlayer;
+    if(weaponSwap.gunForm){
+        targetPosition = (Vector2)player.transform.position + (direction*reverse) * distanceFromPlayer;
     }
     else{
-        targetPosition = (Vector2)player.transform.position - direction * distanceFromPlayer;
+        targetPosition = (Vector2)player.transform.position - (direction*reverse) * distanceFromPlayer;
     }
     // Set the square's position to the target position
     transform.position = targetPosition;
@@ -63,3 +65,4 @@ public class MouseRotation : MonoBehaviour
     transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
     }
 }
+

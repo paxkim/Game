@@ -21,11 +21,12 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private bool canDash = true;
     [SerializeField] private float dashCooldown = 3f; // Cooldown time between dashes
 
+    [Header("Recoil")]
+    public bool isRecoiling = false;  // Flag to indicate when recoil is active
+
     private void Awake() {
         input = new CustomInput();
         rb = GetComponent<Rigidbody2D>();
-
-        // Freeze rotation to prevent spinning
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
     }
 
@@ -54,7 +55,7 @@ public class PlayerMovement : MonoBehaviour
             visual.transform.eulerAngles = rotation;
         }
         
-        if (!isDashing) {
+        if (!isDashing && !isRecoiling) {
             rb.velocity = moveVector * moveSpeed;
         }
     }

@@ -6,6 +6,8 @@ using UnityEngine.InputSystem;
 public class Attack : MonoBehaviour
 {
     private CustomInput input = null;
+    public WeaponSwap weaponSwap;
+    private Rigidbody2D rb = null;
 
     [Header("Attacking Parameters")]
     public GameObject Melee;
@@ -21,12 +23,14 @@ public class Attack : MonoBehaviour
     [SerializeField] private float shootTimer = 0.1f;
     // [SerializeField] private float shootCooldown = 0.05f;
     [SerializeField] public float fireForce = 10f;
+    [SerializeField] public float recoilForce = 50f;
     [SerializeField] private bool isShooting;
     [SerializeField] private bool canShoot = true;
 
     private void Awake(){
         input = new CustomInput();
         Melee.SetActive(false);
+        rb = GetComponent<Rigidbody2D>();
     }
 
     private void OnEnable(){
@@ -41,7 +45,13 @@ public class Attack : MonoBehaviour
     }
     private void OnAttackPerformed(InputAction.CallbackContext value){
         if(canAttack && !isAttacking){
-            StartCoroutine(DoAttack());
+            if(weaponSwap.gunForm == false){
+                StartCoroutine(DoAttack());
+            }
+            else{
+                StartCoroutine(DoShoot());
+            }
+            
         }
     }
     private void OnShootPerformed(InputAction.CallbackContext value){
@@ -70,13 +80,25 @@ public class Attack : MonoBehaviour
         isShooting = true;
         canShoot = false;
         GameObject intBullet = Instantiate(Bullet, gunPoint.transform.position, gunPoint.transform.rotation);
-        MouseRotation mouseRotation = gunPoint.GetComponent<MouseRotation>();
-        if(mouseRotation.gunForm == true){
+        // MouseRotation mouseRotation = gunPoint.GetComponent<MouseRotation>();
+    
+        if(weaponSwap.gunForm == true){
             intBullet.GetComponent<Rigidbody2D>().AddForce(gunPoint.transform.right * fireForce, ForceMode2D.Impulse);
-        }
-        else{
+        } else {
             intBullet.GetComponent<Rigidbody2D>().AddForce(-gunPoint.transform.right * fireForce, ForceMode2D.Impulse);
+    
+            // Log the applied velocity for debugging
+            Vector2 recoilVelocity = gunPoint.transform.right * recoilForce;
+            
+            // Apply recoil velocity to the player and set recoil flag
+            rb.velocity += recoilVelocity;
+            GetComponent<PlayerMovement>().isRecoiling = true;
+            
+            // Reset recoil flag after a short delay
+            yield return new WaitForSeconds(0.1f);  // Adjust this duration as needed
+            GetComponent<PlayerMovement>().isRecoiling = false;
         }
+        
         Destroy(intBullet, 2f);
         yield return new WaitForSeconds(shootTimer);
         isShooting = false;
